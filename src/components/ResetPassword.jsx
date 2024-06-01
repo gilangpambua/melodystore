@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import bcrypt from "bcryptjs";
 
 const ResetPassword = () => {
   const [username, setUsername] = useState("");
@@ -21,14 +22,25 @@ const ResetPassword = () => {
       return;
     }
 
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(newPassword, salt);
+
     const updatedAccounts = {
       ...storedAccounts,
-      [username]: newPassword,
+      [username]: hashedPassword,
     };
 
     localStorage.setItem("accounts", JSON.stringify(updatedAccounts));
-    localStorage.setItem("loginAttempts", 0); // Reset login attempts
-    localStorage.setItem("accountLocked", "false"); // Unlock account
+    const loginAttempts =
+      JSON.parse(localStorage.getItem("loginAttempts")) || {};
+    localStorage.setItem(
+      "loginAttempts",
+      JSON.stringify({
+        ...loginAttempts,
+        [username]: 0,
+        [`${username}_locked`]: false,
+      })
+    );
 
     setMessage("Password has been reset successfully.");
     window.location.href = "/login";

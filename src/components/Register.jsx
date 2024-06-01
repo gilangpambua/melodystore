@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import bcrypt from "bcryptjs";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -7,27 +8,24 @@ const Register = () => {
 
   const handleRegister = (e) => {
     e.preventDefault();
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(password, salt);
 
     if (!username || !password) {
       setMessage("Username and Password cannot be empty.");
       return;
     }
 
-    const existingAccounts = JSON.parse(localStorage.getItem("accounts")) || {};
-
-    if (existingAccounts[username]) {
-      setMessage("Username already exists. Please choose a different one.");
+    const storedAccounts = JSON.parse(localStorage.getItem("accounts")) || {};
+    if (storedAccounts[username]) {
+      setMessage("Username already exists. Please choose another.");
       return;
     }
 
-    const updatedAccounts = {
-      ...existingAccounts,
-      [username]: password,
-    };
+    storedAccounts[username] = hashedPassword;
+    localStorage.setItem("accounts", JSON.stringify(storedAccounts));
 
-    localStorage.setItem("accounts", JSON.stringify(updatedAccounts));
-
-    setMessage("Registration successful!");
+    alert("Registration successful!");
     window.location.href = "/login";
   };
 

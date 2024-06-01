@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import bcrypt from "bcryptjs";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -27,7 +28,7 @@ const Login = () => {
       return;
     }
 
-    if (password === storedPassword) {
+    if (bcrypt.compareSync(password, storedPassword)) {
       localStorage.setItem(
         "loginAttempts",
         JSON.stringify({ ...loginAttempts, [username]: 0 })
