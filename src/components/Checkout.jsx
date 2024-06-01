@@ -2,8 +2,8 @@ import React from "react";
 
 const Checkout = () => {
   return (
-    <div>
-      <div className="flex justify-center text-[24px] font-bold">
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-[24px] font-bold">
         Terima Kasih Telah Melakukan Pemesanan!
       </div>
     </div>
